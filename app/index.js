@@ -1,6 +1,7 @@
 var express = require('express');
 var body = require('body-parser');
 var request = require('request');
+var allSenders = {};
 var token = process.env.VALIDATION_TOKEN;
 
 var app = express();
@@ -30,16 +31,20 @@ app.get('/webhook/', function (req, res) {
 app.post('/webhook/', function (req, res) {
   messaging_events = req.body.entry[0].messaging;
   for (i = 0; i < messaging_events.length; i++) {
-    event = req.body.entry[0].messaging[i];
-    sender = event.sender.id;
+    var event = req.body.entry[0].messaging[i];
+    var senderId = event.sender.id;
+    allSenders[senderId] = true;
+    
     if (event.message && event.message.text) {
-      text = event.message.text;
-      console.log(sender + " : " + text);
-      if (text ===  'hi' || 'Hi' || 'Hello' || 'Hi!') {
-        sendTextMessage(sender, "Hi! Nice to meet you! I'm a stupid boot!");
+      var text = event.message.text;
+      console.log(senderId + " : " + text);
+      Object.keys(allSenders).forEach(function(senderId) {
+      if (text ===  'Hi') {
+        sendTextMessage(senderId, "Hi! Nice to meet you! I'm a stupid boot!");
       } else {
-        sendTextMessage(sender, "I would like to " + text.substring(0, 200));
+        sendTextMessage(senderId, "I would like to " + text.substring(0, 200));
       }
+      });
     }
   }
   res.sendStatus(200);
