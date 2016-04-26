@@ -39,17 +39,20 @@ app.post('/webhook/', function (req, res) {
       var text = event.message.text;
       console.log(senderId + " : " + text);
       Object.keys(allSenders).forEach(function(senderId) {
-      if (text ===  'Hi') {
-        sendTextMessage(senderId, "Hi! Nice to meet you! I'm a stupid boot!");
-      } else {
-        sendTextMessage(senderId, "I would like to " + text.substring(0, 200));
-      }
+        if (text ===  'Hi') {
+          sendTextMessage(senderId, "Hi! Nice to meet you! I'm a stupid boot!");
+        } else {
+          sendTextMessage(senderId, "I would like to " + text.substring(0, 200));
+        }
       });
     }
   }
   res.sendStatus(200);
 });
 
+/**
+ * Send text message back
+ */
 function sendTextMessage(sender, text) {
   messageData = {
     text:text
